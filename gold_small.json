@@ -1,0 +1,661 @@
+[
+    {
+        "qid": "e0044a7b4d146d611e73",
+        "question": "Will the Albany in Georgia reach a hundred thousand occupants before the one in New York?",
+        "answer": false,
+        "decomposition": [
+            "What is the population of Albany, Georgia?",
+            "What is the population of Albany, New York?",
+            "What is the difference between 100,000 and #1?",
+            "What is the difference between 100,000 and #2?",
+            "Is #3 smaller than #4?"
+        ],
+        "evidence": [
+            [
+                [
+                    [
+                        "Albany, Georgia-1"
+                    ]
+                ],
+                [
+                    [
+                        "Albany, New York-2"
+                    ]
+                ],
+                [
+                    "operation"
+                ],
+                [
+                    "operation"
+                ],
+                [
+                    "operation"
+                ]
+            ],
+            [
+                [
+                    [
+                        "Albany, Georgia-35"
+                    ]
+                ],
+                [
+                    [
+                        "Albany, New York-2"
+                    ]
+                ],
+                [
+                    "operation"
+                ],
+                [
+                    "operation"
+                ],
+                [
+                    "operation"
+                ]
+            ],
+            [
+                [
+                    [
+                        "Albany, Georgia-1"
+                    ]
+                ],
+                [
+                    [
+                        "Albany, New York-2"
+                    ]
+                ],
+                [
+                    "operation"
+                ],
+                [
+                    "operation"
+                ],
+                [
+                    "operation"
+                ]
+            ]
+        ]
+    },
+    {
+        "qid": "c69397b4341b65ed080f",
+        "question": "Is the language used in Saint Vincent and the Grenadines rooted in English?",
+        "answer": true,
+        "decomposition": [
+            "What language is used in Saint Vincent and the Grenadines?",
+            "Is #1 based in English?"
+        ],
+        "evidence": [
+            [
+                [
+                    [
+                        "Demographics of Saint Vincent and the Grenadines-9"
+                    ]
+                ],
+                [
+                    [
+                        "Saint Vincent and the Grenadines-59"
+                    ],
+                    "operation"
+                ]
+            ],
+            [
+                [
+                    [
+                        "Vincentian Creole-1"
+                    ]
+                ],
+                [
+                    [
+                        "Vincentian Creole-1"
+                    ]
+                ]
+            ],
+            [
+                [
+                    [
+                        "Saint Vincent and the Grenadines-59"
+                    ]
+                ],
+                [
+                    [
+                        "Saint Vincent and the Grenadines-59"
+                    ]
+                ]
+            ]
+        ]
+    },
+    {
+        "qid": "be5c9933987f046b476e",
+        "question": "Is greed the most prevalent of the Seven Deadly Sins?",
+        "answer": false,
+        "decomposition": [
+            "Is greed a  deadly sin?",
+            "Is gluttonly a deadly sin?",
+            "What percent of crimes involved greed?",
+            "What percent of people are overweight?",
+            "If #1 and #2 are both yes is #3 a higher percentager than #4?"
+        ],
+        "evidence": [
+            [
+                [
+                    [
+                        "Seven deadly sins-1"
+                    ]
+                ],
+                [
+                    [
+                        "Seven deadly sins-1"
+                    ]
+                ],
+                [
+                    [
+                        "Theft-52"
+                    ],
+                    "no_evidence"
+                ],
+                [
+                    [
+                        "Overweight-18"
+                    ]
+                ],
+                [
+                    "no_evidence",
+                    "operation"
+                ]
+            ],
+            [
+                [
+                    [
+                        "Greed-10"
+                    ]
+                ],
+                [
+                    [
+                        "Gluttony-2"
+                    ]
+                ],
+                [
+                    [
+                        "Theft-1"
+                    ],
+                    "no_evidence"
+                ],
+                [
+                    [
+                        "Obesity-4"
+                    ]
+                ],
+                [
+                    "no_evidence",
+                    "operation"
+                ]
+            ],
+            [
+                [
+                    [
+                        "Seven deadly sins-1"
+                    ]
+                ],
+                [
+                    [
+                        "Seven deadly sins-1"
+                    ]
+                ],
+                [
+                    [
+                        "White-collar crime-3"
+                    ],
+                    "no_evidence"
+                ],
+                [
+                    [
+                        "Obesity in the United States-41"
+                    ]
+                ],
+                [
+                    "operation"
+                ]
+            ]
+        ]
+    },
+    {
+        "qid": "1932e05f10680ece229f",
+        "question": "Would the top of Mount Fuji stick out of the Sea of Japan? ",
+        "answer": true,
+        "decomposition": [
+            "How tall is Mount Fuji?",
+            "What is the maximum depth of the Sea of Japan?",
+            "Is #1 greater than #2?"
+        ],
+        "evidence": [
+            [
+                [
+                    [
+                        "Mount Fuji-18"
+                    ]
+                ],
+                [
+                    [
+                        "Sea of Japan-15"
+                    ]
+                ],
+                [
+                    "operation"
+                ]
+            ],
+            [
+                [
+                    [
+                        "Mount Fuji-1"
+                    ]
+                ],
+                [
+                    [
+                        "Sea of Japan-15"
+                    ]
+                ],
+                [
+                    "operation"
+                ]
+            ],
+            [
+                [
+                    [
+                        "Mount Fuji-1"
+                    ]
+                ],
+                [
+                    [
+                        "Sea of Japan-15"
+                    ]
+                ],
+                [
+                    "operation"
+                ]
+            ]
+        ]
+    },
+    {
+        "qid": "fb8b656051c742f5bd27",
+        "question": "Was Lil Jon's top ranked Billboard song a collaboration with a member of The Lox?",
+        "answer": false,
+        "decomposition": [
+            "What is Lil Jon's top ranked Billboard song?",
+            "What artists contributed to #1?",
+            "Who makes up the group The Lox?",
+            "Is any element of #3 also an element of #2?"
+        ],
+        "evidence": [
+            [
+                [
+                    [
+                        "Yeah! (Usher song)-1"
+                    ]
+                ],
+                [
+                    [
+                        "Yeah! (Usher song)-1"
+                    ]
+                ],
+                [
+                    [
+                        "The Lox-1"
+                    ]
+                ],
+                [
+                    [
+                        "The Lox-1",
+                        "Yeah! (Usher song)-7"
+                    ]
+                ]
+            ],
+            [
+                [
+                    [
+                        "Lil Jon-1",
+                        "Yeah! (Usher song)-2"
+                    ]
+                ],
+                [
+                    [
+                        "Yeah! (Usher song)-10"
+                    ]
+                ],
+                [
+                    [
+                        "The Lox-1"
+                    ]
+                ],
+                [
+                    "operation"
+                ]
+            ],
+            [
+                [
+                    [
+                        "Lil Jon-1"
+                    ]
+                ],
+                [
+                    [
+                        "Yeah! (Usher song)-1"
+                    ]
+                ],
+                [
+                    [
+                        "The Lox-1"
+                    ]
+                ],
+                [
+                    "operation"
+                ]
+            ]
+        ]
+    },
+    {
+        "qid": "c91eafafed5a8f80bb5a",
+        "question": "Is Miami a city on the American West Coast?",
+        "answer": false,
+        "decomposition": [
+            "What state is Miami located in?",
+            "Which states are part of the American West Coast?",
+            "Is #1 included in #2?"
+        ],
+        "evidence": [
+            [
+                [
+                    [
+                        "Miami-1"
+                    ]
+                ],
+                [
+                    [
+                        "West Coast of the United States-1"
+                    ]
+                ],
+                [
+                    "operation"
+                ]
+            ],
+            [
+                [
+                    [
+                        "Miami-2"
+                    ]
+                ],
+                [
+                    [
+                        "Pacific states-1"
+                    ]
+                ],
+                [
+                    [
+                        "Pacific states-1"
+                    ],
+                    "operation"
+                ]
+            ],
+            [
+                [
+                    [
+                        "Miami-1"
+                    ]
+                ],
+                [
+                    [
+                        "West Coast of the United States-1"
+                    ]
+                ],
+                [
+                    "operation"
+                ]
+            ]
+        ]
+    },
+    {
+        "qid": "2047c0c34383f8014820",
+        "question": "Can the Swiss Guard fill the Virginia General Assembly chairs?",
+        "answer": false,
+        "decomposition": [
+            "What is the size of the Swiss Guard?",
+            "What is the seating capacity of the Virginia General Assembly?",
+            "Is #1 equal to or greater than #2?"
+        ],
+        "evidence": [
+            [
+                [
+                    [
+                        "Swiss Guards-18"
+                    ],
+                    "no_evidence"
+                ],
+                [
+                    [
+                        "Virginia General Assembly-1"
+                    ]
+                ],
+                [
+                    "no_evidence",
+                    "operation"
+                ]
+            ],
+            [
+                [
+                    [
+                        "Swiss Guard-31"
+                    ]
+                ],
+                [
+                    [
+                        "Virginia General Assembly-1"
+                    ]
+                ],
+                [
+                    "operation"
+                ]
+            ],
+            [
+                [
+                    [
+                        "Swiss Guard-9"
+                    ]
+                ],
+                [
+                    [
+                        "Virginia General Assembly-1"
+                    ]
+                ],
+                [
+                    "operation"
+                ]
+            ]
+        ]
+    },
+    {
+        "qid": "7702ee1e9f757ebffdf1",
+        "question": "Did any country in Portuguese Colonial War share Switzerlands role in WWII?",
+        "answer": true,
+        "decomposition": [
+            "What was Switzerland's position in World War II?",
+            "Which countries were involved in the Portuguese Colonial War?",
+            "Did any of #2 maintain a #1 position through World War II?"
+        ],
+        "evidence": [
+            [
+                [
+                    [
+                        "Switzerland-33"
+                    ]
+                ],
+                [
+                    [
+                        "Portuguese Colonial War-2"
+                    ]
+                ],
+                [
+                    [
+                        "The Two Faces of War-11"
+                    ]
+                ]
+            ],
+            [
+                [
+                    [
+                        "Switzerland during the World Wars-20"
+                    ]
+                ],
+                [
+                    [
+                        "Liberal Wars-1"
+                    ]
+                ],
+                [
+                    [
+                        "Neutral powers during World War II-6"
+                    ],
+                    "operation"
+                ]
+            ],
+            [
+                [
+                    [
+                        "Switzerland during the World Wars-1"
+                    ]
+                ],
+                [
+                    [
+                        "Portuguese Colonial War-1"
+                    ]
+                ],
+                [
+                    "operation"
+                ]
+            ]
+        ]
+    },
+    {
+        "qid": "11d009721f27a60f9cff",
+        "question": "Would a Pict be confused by Old English?",
+        "answer": true,
+        "decomposition": [
+            "What language was spoken by the Picts?",
+            "In what language family is Old English?",
+            "Is #2 not closely related to #1?"
+        ],
+        "evidence": [
+            [
+                [
+                    [
+                        "Picts-1"
+                    ]
+                ],
+                [
+                    [
+                        "Old English-2"
+                    ]
+                ],
+                [
+                    [
+                        "Pictish language-2"
+                    ],
+                    "operation"
+                ]
+            ],
+            [
+                [
+                    [
+                        "Pictish language-1",
+                        "Picts-1"
+                    ]
+                ],
+                [
+                    [
+                        "Old English-1"
+                    ]
+                ],
+                [
+                    [
+                        "English language-2",
+                        "Picts-36"
+                    ],
+                    "operation"
+                ]
+            ],
+            [
+                [
+                    [
+                        "Picts-1"
+                    ]
+                ],
+                [
+                    [
+                        "Old English-3"
+                    ]
+                ],
+                [
+                    [
+                        "Celtic languages-1",
+                        "West Germanic languages-2"
+                    ]
+                ]
+            ]
+        ]
+    },
+    {
+        "qid": "2a90188d5b82d12c036d",
+        "question": "Could Lil Wayne legally operate a vehicle on his own at the beginning of his career?",
+        "answer": false,
+        "decomposition": [
+            "How old was Lil Wayne when he started his career in music?",
+            "What is the minimum age required to obtain a valid driver's license in the US?",
+            "Is #1 at least equal to #2?"
+        ],
+        "evidence": [
+            [
+                [
+                    [
+                        "Lil Wayne-1"
+                    ]
+                ],
+                [
+                    [
+                        "Driver's licenses in the United States-9"
+                    ]
+                ],
+                [
+                    "operation"
+                ]
+            ],
+            [
+                [
+                    [
+                        "Lil Wayne-7"
+                    ]
+                ],
+                [
+                    [
+                        "Driver's licenses in the United States-9"
+                    ]
+                ],
+                [
+                    "operation"
+                ]
+            ],
+            [
+                [
+                    [
+                        "Lil Wayne-1"
+                    ]
+                ],
+                [
+                    [
+                        "Driver's licenses in the United States-12"
+                    ]
+                ],
+                [
+                    "operation"
+                ]
+            ]
+        ]
+    }
+]

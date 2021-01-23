@@ -1,122 +1,181 @@
 import argparse
-from utils import *
+import json
+import os
 
-label_map = {0: "Negative", 1: "Postive"}
+from sari import SARI
 
-def evaluate(golds, preds):
-    all_preds, all_golds, max_f1s, macro_f1s = [], [], [], []
-    f1_dist = defaultdict(list)
-    em_counter = 0
-    em_cluster_agg, em_cluster_relaxed, f1_cluster_80 = {}, {}, {}
 
-    for k, v in golds.items():
-        pred = preds[k]
-        pred_names = [label_map[p] for p in pred]
-        gold_names = [label_map[g] for g in v['label']]
-        is_em = (pred_names == gold_names)
+class AnswersEvaluator:
+    def __init__(self, args):
+        self._correct = 0.0
+        self._total = 0.0
 
-        all_preds.extend(pred)
-        all_golds.extend(v['label'])
+    def __call__(self, gold, prediction):
+        self._correct += int(gold["answer"] == prediction)
+        self._total += 1
 
-        if sum(v['label']) == 0 and sum(pred) == 0:
-            macro_f1s.append(1.0)
-        else:
-            macro_f1s.append(cal_f1(pred_names, gold_names, {v: k for k, v in label_map.items()}))
+    def get_metrics(self):
+        return {"Accuracy": self._correct / self._total}
 
-        max_f1, instance_matched = 0, 0
-        for gold in v['idv_answers']:
-            label_names = [label_map[l] for l in gold]
-            if pred_names == label_names: instance_matched = 1
-            if sum(gold) == 0 and sum(pred) == 0:
-                f1 = 1.0
-            else:
-                f1 = cal_f1(pred_names, label_names, {v: k for k, v in label_map.items()})
-            if f1 >= max_f1:
-                max_f1 = f1
-                key = len(gold)
 
-        if v['cluster_size'] > 1:
-            if v['cluster'] not in em_cluster_agg:
-                em_cluster_agg[v['cluster']] = 1
-            if is_em == 0: em_cluster_agg[v['cluster']] = 0
+class DecompositionsEvaluator:
+    def __init__(self, args):
+        self._sari = SARI()
 
-            if v['cluster'] not in em_cluster_relaxed:
-                em_cluster_relaxed[v['cluster']] = 1
-            if instance_matched == 0: em_cluster_relaxed[v['cluster']] = 0
+    def __call__(self, gold, prediction):
+        sources = [gold["question"].split(" ")]
+        predictions = [" ".join(prediction).split(" ")]
+        targets = [[" ".join(gold["decomposition"]).split(" ")]]
 
-            if v['cluster'] not in f1_cluster_80:
-                f1_cluster_80[v['cluster']] = 1
-            if max_f1 < 0.8: f1_cluster_80[v['cluster']] = 0
+        self._sari(sources, predictions, targets)
 
-        max_f1s.append(max_f1)
-        em_counter += instance_matched
-        f1_dist[key].append(max_f1)
+    def get_metrics(self):
+        return {"SARI": self._sari.get_metric()["SARI"]}
 
-    assert len(em_cluster_relaxed) == len(em_cluster_agg)
-    assert len(f1_cluster_80) == len(em_cluster_agg)
 
-    em_cluster_relaxed_res = sum(em_cluster_relaxed.values()) / len(em_cluster_relaxed)
-    em_cluster_agg_res = sum(em_cluster_agg.values()) / len(em_cluster_agg)
-    f1_cluster_80_res = sum(f1_cluster_80.values()) / len(f1_cluster_80)
+class ParagraphsEvaluator:
+    def __init__(self, args):
+        self._scores = []
+        self._retrieval_limit = args.retrieval_limit
 
-    label_names = [label_map[l] for l in all_golds]
-    pred_names = [label_map[p] for p in all_preds]
+    @staticmethod
+    def _recall(relevant_paragraphs, retrieved_paragraphs):
+        result = len(set(relevant_paragraphs).intersection(retrieved_paragraphs)) / len(
+            relevant_paragraphs
+        )
+        return result
 
-    eval_pos_f1 = cal_f1(pred_names, label_names, {v: k for k, v in label_map.items()})
+    def __call__(self, gold, prediction):
+        evidence_per_annotator = []
+        for annotator in gold["evidence"]:
+            evidence_per_annotator.append(
+                set(
+                    evidence_id
+                    for step in annotator
+                    for x in step
+                    if isinstance(x, list)
+                    for evidence_id in x
+                )
+            )
+        retrieved_paragraphs = prediction[: self._retrieval_limit]
 
-    print("the current eval positive class Micro F1 (Agg) is: %.4f" % eval_pos_f1)
-    print("the current eval positive class Macro F1 (Relaxed) is: %.4f" % np.mean(max_f1s))
-    print("the current eval positive class Macro F1 (Agg) is: %.4f" % np.mean(macro_f1s))
+        score_per_annotator = []
+        for evidence in evidence_per_annotator:
+            score = self._recall(evidence, retrieved_paragraphs) if len(evidence) > 0 else 0
+            score_per_annotator.append(score)
 
-    print("the current eval exact match ratio (Relaxed) is: %.4f" % (em_counter / len(golds)))
+        annotator_maximum = max(score_per_annotator)
+        self._scores.append(annotator_maximum)
 
-    print("%d Clusters" % len(em_cluster_relaxed))
-    print("the current eval clustered EM (Agg) is: %.4f" % (em_cluster_agg_res))
-    print("the current eval clustered EM (Relaxed) is: %.4f" % (em_cluster_relaxed_res))
-    print("the current eval clusrered F1 (max>=0.8) is: %.4f" % (f1_cluster_80_res))
+    def get_metrics(self):
+        return {f"Recall@{self._retrieval_limit}": float(sum(self._scores)) / len(self._scores)}
 
-    return np.mean(max_f1s), (em_counter / len(golds)), (f1_cluster_80_res)
+
+class EvaluatorWrapper:
+    def __init__(self, eval_keys, args):
+        self._evaluators = {eval_key: self._get_evaluator(eval_key, args) for eval_key in eval_keys}
+
+    @staticmethod
+    def _get_evaluator(eval_key, args):
+        evaluator = {
+            "answers": AnswersEvaluator(args),
+            "decomps": DecompositionsEvaluator(args),
+            "paras": ParagraphsEvaluator(args),
+        }[eval_key]
+
+        return evaluator
+
+    def __getitem__(self, eval_key):
+        return self._evaluators[eval_key]
+
+    def get_metrics(self):
+        return {
+            eval_key: evaluator.get_metrics() for eval_key, evaluator in self._evaluators.items()
+        }
+
+
+def evaluate(gold_annotations, all_predictions, args):
+    evaluator = EvaluatorWrapper(all_predictions.keys(), args)
+    for gold_instance in gold_annotations:
+        qid = gold_instance["qid"]
+        for predictions_key, predictions in all_predictions.items():
+            evaluator[predictions_key](gold_instance, predictions[qid])
+    return evaluator.get_metrics()
+
 
 def main(args):
-    labels_file = args.labels_file
-    preds_file = args.preds_file
+    golds_file = args.golds_file
+    predictions_files = {
+        "answers": args.answers_file,
+        "decomps": args.decomps_file,
+        "paras": args.paras_file,
+    }
     metrics_output_file = args.metrics_output_file
 
-    with open(labels_file) as infile:
-        gold_answers = json.load(infile)
+    with open(golds_file) as infile:
+        gold_annotations = json.load(infile)
 
-    with open(preds_file) as infile:
-        pred_answers = json.load(infile)
+    all_predictions = {}
+    for predictions_key, predictions_file in predictions_files.items():
+        if predictions_file is None:
+            continue
+        assert os.path.isfile(
+            predictions_file
+        ), f'The {predictions_key} file "{predictions_file}" does not exist'
 
-    if len(gold_answers) != len(pred_answers):
-        raise Exception("The prediction file does not contain the same number of lines as the "
-                        "number of test instances.")
+        with open(predictions_file) as infile:
+            all_predictions[predictions_key] = json.load(infile)
 
-    f1, em, c = evaluate(gold_answers, pred_answers)
-    results = {
-        'F1': f1,
-        'EM': em,
-        'C': c
-    }
+        if len(gold_annotations) != len(all_predictions[predictions_key]):
+            raise Exception(
+                f"The {predictions_key} file does not contain the same number of lines as the "
+                "number of test instances."
+            )
+    assert (
+        len(all_predictions) > 0
+    ), "At least one predictions file (answers_file/decomps_file/paras_file) should be given"
+
+    results = evaluate(gold_annotations, all_predictions, args=args)
     with open(metrics_output_file, "w") as f:
-        f.write(json.dumps(results))
-    f.close()
+        output = json.dumps(results, indent=4)
+        print(output)
+        f.write(output)
 
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser(
-        description='Evaluate TORQUE predictions')
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Evaluate StrategyQA predictions")
     # Required Parameters
-    parser.add_argument('--labels_file', type=str, help='Location of test labels', default=None)
-    parser.add_argument('--preds_file', type=str, help='Location of predictions', default=None)
-    parser.add_argument('--metrics_output_file',
-                        type=str,
-                        help='Location of output metrics file',
-                        default="metrics.json")
+    parser.add_argument(
+        "--golds_file",
+        type=str,
+        help="Location of all gold annotations",
+        required=True,
+    )
+    parser.add_argument(
+        "--answers_file",
+        type=str,
+        help="Location of QA answer predictions",
+        default=None,
+    )
+    parser.add_argument(
+        "--decomps_file",
+        type=str,
+        help="Location of generated decompositions",
+        default=None,
+    )
+    parser.add_argument(
+        "--paras_file", type=str, help="Location of retrieved paragraphs", default=None
+    )
+    parser.add_argument("--retrieval_limit", type=int, default=10)
+    parser.add_argument(
+        "--metrics_output_file",
+        type=str,
+        help="Location of output metrics file",
+        default="metrics.json",
+    )
 
     args = parser.parse_args()
-    print('====Input Arguments====')
+    print("====Input Arguments====")
     print(json.dumps(vars(args), indent=2, sort_keys=True))
     print("=======================")
     main(args)
-
-
