@@ -34,7 +34,7 @@ echo Metrics
 echo ------------------------------
 echo
 
-EXPECTED=$'{\n    "answers": {\n        "Accuracy": 0.8\n    },\n    "decomps": {\n        "SARI": 0.6448412649686753\n    },\n    "paras": {\n        "Recall@10": 0.2833333333333333\n    }\n}'
+EXPECTED=$'{\n    "Accuracy": 0.8,\n    "SARI": 0.6448412649686753,\n    "Recall@10": 0.2833333333333333\n}'
 ACTUAL=$(cat $OUTPUT_DIR/metrics.json)
 
 echo Metrics obtained in file $OUTPUT_DIR/metrics.json:
