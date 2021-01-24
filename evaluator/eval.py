@@ -89,9 +89,10 @@ class EvaluatorWrapper:
         return self._evaluators[eval_key]
 
     def get_metrics(self):
-        return {
-            eval_key: evaluator.get_metrics() for eval_key, evaluator in self._evaluators.items()
-        }
+        metrics = {}
+        for evaluator in self._evaluators.values():
+            metrics.update(evaluator.get_metrics())
+        return metrics
 
 
 def evaluate(gold_annotations, all_predictions, args):
