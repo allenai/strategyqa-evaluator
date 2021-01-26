@@ -78,9 +78,9 @@ class EvaluatorWrapper:
     @staticmethod
     def _get_evaluator(eval_key, args):
         evaluator = {
-            "answers": AnswersEvaluator(args),
-            "decomps": DecompositionsEvaluator(args),
-            "paras": ParagraphsEvaluator(args),
+            "answer": AnswersEvaluator(args),
+            "decompositions": DecompositionsEvaluator(args),
+            "paragraphs": ParagraphsEvaluator(args),
         }[eval_key]
 
         return evaluator
@@ -106,35 +106,34 @@ def evaluate(gold_annotations, all_predictions, args):
 
 def main(args):
     golds_file = args.golds_file
-    predictions_files = {
-        "answers": args.answers_file,
-        "decomps": args.decomps_file,
-        "paras": args.paras_file,
-    }
+    predictions_file = args.predictions_file
     metrics_output_file = args.metrics_output_file
 
     with open(golds_file) as infile:
         gold_annotations = json.load(infile)
 
-    all_predictions = {}
-    for predictions_key, predictions_file in predictions_files.items():
-        if predictions_file is None:
-            continue
-        assert os.path.isfile(
-            predictions_file
-        ), f'The {predictions_key} file "{predictions_file}" does not exist'
-
-        with open(predictions_file) as infile:
-            all_predictions[predictions_key] = json.load(infile)
-
-        if len(gold_annotations) != len(all_predictions[predictions_key]):
+    with open(predictions_file) as infile:
+        predictions = json.load(infile)
+        if len(gold_annotations) != len(predictions):
             raise Exception(
-                f"The {predictions_key} file does not contain the same number of lines as the "
+                f"The predictions file does not contain the same number of instances as the "
                 "number of test instances."
             )
-    assert (
-        len(all_predictions) > 0
-    ), "At least one predictions file (answers_file/decomps_file/paras_file) should be given"
+
+    all_predictions = {}
+    for qid, prediction in predictions.items():
+        if len(all_predictions) == 0:
+            for key_option in ["answer", "decompositions", "paragraphs"]:
+                if key_option in prediction.keys():
+                    all_predictions[key_option] = {}
+        else:
+            error_message = f"There is a difference betweeen prediction types provided for instances: {all_predictions.keys()} != {prediction.keys()}"
+            for prediction_key in all_predictions.keys():
+                assert prediction_key in prediction, error_message
+            assert len(all_predictions.keys()) == len(prediction.keys()), error_message
+
+        for prediction_key in all_predictions.keys():
+            all_predictions[prediction_key][qid] = prediction[prediction_key]
 
     results = evaluate(gold_annotations, all_predictions, args=args)
     with open(metrics_output_file, "w") as f:
@@ -153,19 +152,10 @@ if __name__ == "__main__":
         required=True,
     )
     parser.add_argument(
-        "--answers_file",
+        "--predictions_file",
         type=str,
-        help="Location of QA answer predictions",
-        default=None,
-    )
-    parser.add_argument(
-        "--decomps_file",
-        type=str,
-        help="Location of generated decompositions",
-        default=None,
-    )
-    parser.add_argument(
-        "--paras_file", type=str, help="Location of retrieved paragraphs", default=None
+        help="Location of predictions",
+        required=True,
     )
     parser.add_argument("--retrieval_limit", type=int, default=10)
     parser.add_argument(

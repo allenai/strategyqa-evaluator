@@ -21,12 +21,10 @@ OUTPUT_DIR=$(mktemp -d)
 
 docker run \
   -v $PWD/gold_small.json:/data/gold_small.json:ro \
-  -v $PWD/answers_file_small.json:/predictions/answers_file_small.json:ro \
-  -v $PWD/decomps_file_small.json:/predictions/decomps_file_small.json:ro \
-  -v $PWD/paras_file_small.json:/predictions/paras_file_small.json:ro \
+  -v $PWD/predictions_small.json:/predictions/predictions_small.json:ro \
   -v $OUTPUT_DIR:/output:rw \
   strategyqa-evaluator \
-  python eval.py --golds_file /data/gold_small.json --answers_file /predictions/answers_file_small.json --decomps_file /predictions/decomps_file_small.json --paras_file /predictions/paras_file_small.json --metrics_output_file /output/metrics.json
+  python eval.py --golds_file /data/gold_small.json --predictions_file /predictions/predictions_small.json --metrics_output_file /output/metrics.json
 
 echo
 echo ------------------------------
