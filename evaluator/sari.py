@@ -38,8 +38,6 @@ import numpy as np
 
 from typing import Tuple
 
-from overrides import overrides
-
 
 # The paper that intoduces the SARI score uses only the precision of the deleted
 # tokens (i.e. beta=0). To give more emphasis on recall, you may set, e.g.,
