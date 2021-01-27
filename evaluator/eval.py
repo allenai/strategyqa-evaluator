@@ -4,7 +4,7 @@ import json
 from sari import SARI
 
 
-class AnswersEvaluator:
+class AnswerEvaluator:
     def __init__(self, args):
         self._correct = 0.0
         self._total = 0.0
@@ -17,7 +17,7 @@ class AnswersEvaluator:
         return {"Accuracy": self._correct / self._total}
 
 
-class DecompositionsEvaluator:
+class DecompositionEvaluator:
     def __init__(self, args):
         self._sari = SARI()
 
@@ -77,8 +77,8 @@ class EvaluatorWrapper:
     @staticmethod
     def _get_evaluator(eval_key, args):
         evaluator = {
-            "answer": AnswersEvaluator(args),
-            "decompositions": DecompositionsEvaluator(args),
+            "answer": AnswerEvaluator(args),
+            "decomposition": DecompositionEvaluator(args),
             "paragraphs": ParagraphsEvaluator(args),
         }[eval_key]
 
@@ -122,7 +122,7 @@ def main(args):
     all_predictions = {}
     for qid, prediction in predictions.items():
         if len(all_predictions) == 0:
-            for key_option in ["answer", "decompositions", "paragraphs"]:
+            for key_option in ["answer", "decomposition", "paragraphs"]:
                 if key_option in prediction.keys():
                     all_predictions[key_option] = {}
         else:
