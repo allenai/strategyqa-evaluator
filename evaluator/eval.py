@@ -23,9 +23,9 @@ class DecompositionsEvaluator:
         self._sari = SARI()
 
     def __call__(self, gold, prediction):
-        sources = [gold["question"].split(" ")]
-        predictions = [" ".join(prediction).split(" ")]
-        targets = [[" ".join(gold["decomposition"]).split(" ")]]
+        sources = [gold["question"].replace("?", " ?").split()]
+        predictions = [" ".join(prediction).replace("?", " ?").split()]
+        targets = [[" ".join(gold["decomposition"]).replace("?", " ?").split()]]
 
         self._sari(sources, predictions, targets)
 

@@ -28,7 +28,13 @@ Then run `eval.py` as shown in the `test.sh` script.
 
 # Submitting to the Leaderboard
 
-To submit your own predictions to the [StrategyQA leaderboard](https://leaderboard.allenai.org/strategyqa), produce JSON files for all 490 test examples, in accordance with the desired evaluation:
-- QA accuracy: produce file like `answers_file_small.json`
-- Decomposition SARI score: produce file like `decomps_file_small.json`
-- Recall@10 score: produce file like `paras_file_small.json`
+The file `predictions_dummy.json` is a valid dummy submission file for the
+[StrategyQA leaderboard](https://leaderboard.allenai.org/strategyqa). It contains
+predictions for 490 questions. If you submit it, you'll get this dummy score:
+
+* Accuracy: 0.46122448979591835
+* SARI: 0.42750331591054463
+* Recall@10: 0.0
+
+To submit your own predictions to the [StrategyQA leaderboard](https://leaderboard.allenai.org/strategyqa), produce a JSON file like
+`predictions_dummy.json` with your predictions, and submit it.
