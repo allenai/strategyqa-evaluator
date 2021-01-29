@@ -73,6 +73,7 @@ class ParagraphsEvaluator:
 class EvaluatorWrapper:
     def __init__(self, eval_keys, args):
         self._evaluators = {eval_key: self._get_evaluator(eval_key, args) for eval_key in eval_keys}
+        self._retrieval_limit = args.retrieval_limit
 
     @staticmethod
     def _get_evaluator(eval_key, args):
@@ -88,7 +89,11 @@ class EvaluatorWrapper:
         return self._evaluators[eval_key]
 
     def get_metrics(self):
-        metrics = {}
+        metrics = {
+            "Accuracy": 0.0,
+            "SARI": 0.0,
+            f"Recall@{self._retrieval_limit}": 0.0,
+        }
         for evaluator in self._evaluators.values():
             metrics.update(evaluator.get_metrics())
         return metrics
